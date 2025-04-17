@@ -1,0 +1,156 @@
+[
+  {
+    "link": "https://www.airbnb.com/rooms/1388284245354970748",
+    "title": "Modern Manhattan Haven Near Everything",
+    "listing_type": "Entire rental unit in New York, United States",
+    "listing_price": 399,
+    "zipcode": 10001,
+    "host_url": "https://www.airbnb.com/users/show/488101247",
+    "host": {
+      "host_url": "https://www.airbnb.com/users/show/488101247",
+      "host_name": "Ehmber",
+      "avatar_url": "https://a0.muscache.com/im/pictures/user/User/original/680c4980-7d48-43e9-a62c-5b45901ea384.jpeg?im_w=720",
+      "superhost": true,
+      "reviews": 169,
+      "rating": 4.82,
+      "about": null,
+      "started_year": 2023,
+      "languages": null,
+      "location": "New York",
+      "job": null,
+      "total_listings": 3
+    }
+  },
+  {
+    "link": "https://www.airbnb.com/rooms/1268375002268643154",
+    "title": "Perfection on the Upper East",
+    "listing_type": "Entire rental unit in New York, United States",
+    "listing_price": 320,
+    "zipcode": 10001,
+    "host_url": "https://www.airbnb.com/users/show/120295348",
+    "host": {
+      "host_url": "https://www.airbnb.com/users/show/120295348",
+      "host_name": "Hope",
+      "avatar_url": "https://a0.muscache.com/im/pictures/user/User-120295348/original/cf683b9c-6c23-46d5-a4b5-2b7f4bc792cc.jpeg?im_w=720",
+      "superhost": true,
+      "reviews": 28,
+      "rating": 5,
+      "about": null,
+      "started_year": 2024,
+      "languages": ["English", "French", "Spanish"],
+      "location": "New York",
+      "job": null,
+      "total_listings": 5
+    }
+  },
+  {
+    "link": "https://www.airbnb.com/rooms/12345",
+    "title": "Cozy Brooklyn Apartment",
+    "listing_type": "Entire rental unit in New York, United States",
+    "listing_price": 250,
+    "zipcode": 11201,
+    "host_url": "https://www.airbnb.com/users/show/12345",
+    "host": {
+      "host_url": "https://www.airbnb.com/users/show/12345",
+      "host_name": "Jennifer",
+      "avatar_url": "/placeholder.svg?height=720&width=720",
+      "superhost": true,
+      "reviews": 188,
+      "rating": 4.7,
+      "about": null,
+      "started_year": 2013,
+      "languages": ["English"],
+      "location": "New York",
+      "job": null,
+      "total_listings": 2
+    }
+  },
+  {
+    "link": "https://www.airbnb.com/rooms/67890",
+    "title": "Luxury Loft in Chicago",
+    "listing_type": "Entire loft in Chicago, United States",
+    "listing_price": 280,
+    "zipcode": 60601,
+    "host_url": "https://www.airbnb.com/users/show/67890",
+    "host": {
+      "host_url": "https://www.airbnb.com/users/show/67890",
+      "host_name": "Matthew",
+      "avatar_url": "/placeholder.svg?height=720&width=720",
+      "superhost": false,
+      "reviews": 2186,
+      "rating": 4.9,
+      "about": null,
+      "started_year": 2010,
+      "languages": ["English", "Spanish"],
+      "location": "Chicago",
+      "job": null,
+      "total_listings": 4
+    }
+  },
+  {
+    "link": "https://www.airbnb.com/rooms/54321",
+    "title": "Sunny Tampa Bungalow",
+    "listing_type": "Entire house in Tampa, United States",
+    "listing_price": 180,
+    "zipcode": 33601,
+    "host_url": "https://www.airbnb.com/users/show/54321",
+    "host": {
+      "host_url": "https://www.airbnb.com/users/show/54321",
+      "host_name": "Daria",
+      "avatar_url": "/placeholder.svg?height=720&width=720",
+      "superhost": false,
+      "reviews": 95,
+      "rating": 4.3,
+      "about": null,
+      "started_year": 2016,
+      "languages": ["English"],
+      "location": "Tampa",
+      "job": null,
+      "total_listings": 1
+    }
+  },
+  {
+    "link": "https://www.airbnb.com/rooms/98765",
+    "title": "San Francisco Studio with View",
+    "listing_type": "Entire apartment in San Francisco, United States",
+    "listing_price": 350,
+    "zipcode": 94103,
+    "host_url": "https://www.airbnb.com/users/show/98765",
+    "host": {
+      "host_url": "https://www.airbnb.com/users/show/98765",
+      "host_name": "CJ",
+      "avatar_url": "/placeholder.svg?height=720&width=720",
+      "superhost": false,
+      "reviews": 206,
+      "rating": 4.6,
+      "about": null,
+      "started_year": 2009,
+      "languages": ["English", "Chinese"],
+      "location": "San Francisco",
+      "job": null,
+      "total_listings": 3
+    }
+  },
+  {
+    "link": "https://www.airbnb.com/rooms/13579",
+    "title": "Seattle Waterfront Condo",
+    "listing_type": "Entire condo in Seattle, United States",
+    "listing_price": 290,
+    "zipcode": 98101,
+    "host_url": "https://www.airbnb.com/users/show/13579",
+    "host": {
+      "host_url": "https://www.airbnb.com/users/show/13579",
+      "host_name": "Robert",
+      "avatar_url": "/placeholder.svg?height=720&width=720",
+      "superhost": false,
+      "reviews": 32,
+      "rating": 4.5,
+      "about": null,
+      "started_year": 2022,
+      "languages": ["English"],
+      "location": "Seattle",
+      "job": null,
+      "total_listings": 1
+    }
+  }
+]
