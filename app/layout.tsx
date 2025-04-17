@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "Airbnb Hosts Dashboard",
   description: "Dashboard for Airbnb host data analysis",
-    generator: 'v0.dev'
+    generator: 'Igor Kovalevych'
 }
 
 export default function RootLayout({

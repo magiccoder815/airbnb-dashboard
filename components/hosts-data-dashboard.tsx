@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Download } from "lucide-react"
+import { Download, ChevronLeft, ChevronRight } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // Define the types based on your data structure
 type Host = {
@@ -22,12 +23,15 @@ type Host = {
   about: string | null
   started_year: number
   languages: string[] | null
-  location: string | null
+  location: {
+    city: string
+    state: string
+  } | null
   job: string | null
   total_listings: number
 }
 
-type Listing = {
+export type Listing = {
   link: string
   title: string
   listing_type: string
@@ -43,19 +47,25 @@ interface HostsDataDashboardProps {
 
 export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
   const [zipCode, setZipCode] = useState("")
-  const [reviewsRange, setReviewsRange] = useState([0, 100])
+  const [reviewsRange, setReviewsRange] = useState([0, 500])
   const [ratingRange, setRatingRange] = useState([0, 5])
-  const [yearFilters, setYearFilters] = useState({
-    "2009": false,
-    "2010": false,
-    "2013": false,
-    "2016": false,
-    "2022": false,
-    "2023": false,
-    "2024": false,
-  })
+  const uniqueYears = [...new Set(initialData.map((item) => item.host.started_year))]
+    .filter(Boolean)
+    .sort((a, b) => a - b)
+  const initialYearFilters = Object.fromEntries(uniqueYears.map((year) => [year.toString(), false]))
+  const [yearFilters, setYearFilters] = useState(initialYearFilters)
   const [superhostFilter, setSuperhostFilter] = useState<string | null>(null)
   const [filteredData, setFilteredData] = useState<Listing[]>(initialData)
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(5)
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage)
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem)
 
   // Calculate statistics
   const totalHosts = filteredData.length
@@ -81,61 +91,41 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
     { rating: "5", count: filteredData.filter((item) => item.host.rating && item.host.rating >= 4.5).length },
   ]
 
-  // Generate hosts over time data
-  const yearsData = [
-    {
-      year: "2009",
-      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= 2009).length,
-    },
-    {
-      year: "2010",
-      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= 2010).length,
-    },
-    {
-      year: "2013",
-      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= 2013).length,
-    },
-    {
-      year: "2016",
-      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= 2016).length,
-    },
-    {
-      year: "2020",
-      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= 2020).length,
-    },
-    {
-      year: "2023",
-      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= 2023).length,
-    },
-    {
-      year: "2024",
-      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= 2024).length,
-    },
-  ]
+    // Generate hosts over time data dynamically based on unique years
+    const yearsData = uniqueYears.map((year) => ({
+      year: year.toString(),
+      count: filteredData.filter((item) => item.host.started_year && item.host.started_year <= year).length,
+    }))
 
   // Apply filters
   useEffect(() => {
     let result = initialData
+    console.log("lenght", initialData.length);
 
     // Filter by ZIP code
     if (zipCode) {
-      result = result.filter((item) => item.zipcode.toString().includes(zipCode))
+      result = result.filter((item) => item.zipcode.toString().includes(zipCode));
     }
-
-    // Filter by reviews range
-    result = result.filter((item) => item.host.reviews >= reviewsRange[0] && item.host.reviews <= reviewsRange[1])
-
-    // Filter by rating range
-    result = result.filter((item) => item.host.rating >= ratingRange[0] && item.host.rating <= ratingRange[1])
-
     // Filter by years
     const selectedYears = Object.entries(yearFilters)
       .filter(([_, isSelected]) => isSelected)
       .map(([year]) => Number.parseInt(year))
 
     if (selectedYears.length > 0) {
-      result = result.filter((item) => item.host.started_year && selectedYears.includes(item.host.started_year))
+      result = result.filter((item) => 
+        item.host.started_year && selectedYears.includes(item.host.started_year)
+      )
     }
+    // Deduplicate hosts based on host URL
+    const uniqueHosts = new Set();
+    result = result.filter(item => {
+      if (uniqueHosts.has(item.host_url)) {
+        return false;
+      } else {
+        uniqueHosts.add(item.host_url);
+        return true;
+      }
+    });
 
     // Filter by superhost status
     if (superhostFilter === "Yes") {
@@ -143,23 +133,18 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
     } else if (superhostFilter === "No") {
       result = result.filter((item) => !item.host.superhost)
     }
-
+    console.log("4", result);
     setFilteredData(result)
+    
+    // Reset to first page when filters change
+    setCurrentPage(1)
   }, [zipCode, reviewsRange, ratingRange, yearFilters, superhostFilter, initialData])
 
   const resetFilters = () => {
     setZipCode("")
-    setReviewsRange([0, 100])
+    setReviewsRange([0, 7000])
     setRatingRange([0, 5])
-    setYearFilters({
-      "2009": false,
-      "2010": false,
-      "2013": false,
-      "2016": false,
-      "2022": false,
-      "2023": false,
-      "2024": false,
-    })
+    setYearFilters(initialYearFilters)
     setSuperhostFilter(null)
   }
 
@@ -172,7 +157,7 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
       item.host.rating,
       item.host.started_year,
       item.host.superhost ? "Yes" : "No",
-      item.host.location || "N/A",
+      item.host.location ? item.host.location.city : "N/A",
     ])
 
     const csvContent = [headers.join(","), ...csvData.map((row) => row.join(","))].join("\n")
@@ -187,6 +172,67 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+  }
+
+  // Pagination handlers
+  const goToPage = (page: number) => {
+    if (page < 1) page = 1
+    if (page > totalPages) page = totalPages
+    setCurrentPage(page)
+  }
+
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value))
+    setCurrentPage(1) // Reset to first page when changing items per page
+  }
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = []
+    const maxPagesToShow = 5
+
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if total pages are less than max pages to show
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i)
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1)
+
+      // Calculate start and end of page range
+      let startPage = Math.max(2, currentPage - 1)
+      let endPage = Math.min(totalPages - 1, currentPage + 1)
+
+      // Adjust if we're at the beginning or end
+      if (currentPage <= 2) {
+        endPage = 4
+      } else if (currentPage >= totalPages - 1) {
+        startPage = totalPages - 3
+      }
+
+      // Add ellipsis if needed
+      if (startPage > 2) {
+        pageNumbers.push("...")
+      }
+
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i)
+      }
+
+      // Add ellipsis if needed
+      if (endPage < totalPages - 1) {
+        pageNumbers.push("...")
+      }
+
+      // Always show last page
+      if (totalPages > 1) {
+        pageNumbers.push(totalPages)
+      }
+    }
+
+    return pageNumbers
   }
 
   return (
@@ -222,8 +268,8 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
               <label className="block text-sm font-medium mb-2">Number of reviews</label>
               <div className="px-2">
                 <Slider
-                  defaultValue={[0, 100]}
-                  max={100}
+                  defaultValue={[0, 500]}
+                  max={500}
                   step={1}
                   value={reviewsRange}
                   onValueChange={setReviewsRange}
@@ -379,8 +425,20 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
 
           {/* Data Table */}
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-semibold">Host Details</CardTitle>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500">Rows per page:</span>
+                <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
+                  <SelectTrigger className="w-[80px]">
+                    <SelectValue placeholder="5" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -395,7 +453,7 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredData.map((item, index) => (
+                  {currentItems.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
@@ -417,11 +475,56 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
                       <TableCell>{item.host.rating}</TableCell>
                       <TableCell>{item.host.started_year}</TableCell>
                       <TableCell>{item.host.superhost ? "Yes" : "No"}</TableCell>
-                      <TableCell>{item.host.location || "N/A"}</TableCell>
+                      <TableCell>{item.host.location ? item.host.location.city : "N/A"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+
+              {/* Pagination Controls */}
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-sm text-gray-500">
+                  Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredData.length)} of{" "}
+                  {filteredData.length} hosts
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+
+                  {getPageNumbers().map((page, index) =>
+                    typeof page === "number" ? (
+                      <Button
+                        key={index}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => goToPage(page)}
+                        className={currentPage === page ? "bg-blue-500 hover:bg-blue-600" : ""}
+                      >
+                        {page}
+                      </Button>
+                    ) : (
+                      <span key={index} className="px-2">
+                        {page}
+                      </span>
+                    ),
+                  )}
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
