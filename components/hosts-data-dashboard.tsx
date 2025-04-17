@@ -60,7 +60,7 @@ interface HostsDataDashboardProps {
 
 export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
     const [zipCode, setZipCode] = useState("");
-    const [reviewsRange, setReviewsRange] = useState([0, 500]);
+    const [reviewsRange, setReviewsRange] = useState([0, 501]);
     const [ratingRange, setRatingRange] = useState([0, 5]);
     const uniqueYears = [
         ...new Set(initialData.map((item) => item.host.started_year)),
@@ -184,10 +184,12 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
         });
 
         // Filter by reviews range
+        const maxReviews = reviewsRange[1] === 501 ? Infinity : reviewsRange[1];
+
         result = result.filter(
             (item) =>
                 item.host.reviews >= reviewsRange[0] &&
-                item.host.reviews <= reviewsRange[1]
+                item.host.reviews <= maxReviews
         );
 
         // Filter by rating range
@@ -219,7 +221,7 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
 
     const resetFilters = () => {
         setZipCode("");
-        setReviewsRange([0, 500]);
+        setReviewsRange([0, 501]);
         setRatingRange([0, 5]);
         setYearFilters(initialYearFilters);
         setSuperhostFilter(null);
@@ -367,16 +369,24 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
                             </label>
                             <div className="px-2">
                                 <Slider
-                                    defaultValue={[0, 500]}
-                                    max={500}
+                                    defaultValue={[0, 501]}
+                                    max={501}
                                     step={1}
                                     value={reviewsRange}
                                     onValueChange={setReviewsRange}
                                     className="my-4"
                                 />
                                 <div className="flex justify-between text-xs text-gray-500">
-                                    <span>{reviewsRange[0]}</span>
-                                    <span>{reviewsRange[1]}</span>
+                                    <span>
+                                        {reviewsRange[0] === 501
+                                            ? "500"
+                                            : reviewsRange[0]}
+                                    </span>
+                                    <span>
+                                        {reviewsRange[1] === 501
+                                            ? "500+"
+                                            : reviewsRange[1]}
+                                    </span>
                                 </div>
                             </div>
                         </div>
