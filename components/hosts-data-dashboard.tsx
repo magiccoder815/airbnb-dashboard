@@ -71,7 +71,9 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
         uniqueYears.map((year) => [year.toString(), false])
     );
     const [yearFilters, setYearFilters] = useState(initialYearFilters);
-    const [superhostFilter, setSuperhostFilter] = useState<string | null>(null);
+    const [superhostFilter, setSuperhostFilter] = useState<string | null>(
+        "All"
+    );
     const [filteredData, setFilteredData] = useState<Listing[]>(initialData);
 
     // Pagination state
@@ -201,6 +203,7 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
         } else if (superhostFilter === "No") {
             result = result.filter((item) => !item.host.superhost);
         }
+        // No filter applied if "All" is selected
         setFilteredData(result);
 
         // Reset to first page when filters change
@@ -435,37 +438,57 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
                             <label className="block text-sm font-medium mb-2">
                                 Superhost
                             </label>
-                            <div className="space-y-2">
+                            <div className="flex items-center space-x-6">
                                 <div className="flex items-center">
-                                    <Checkbox
+                                    <input
+                                        type="radio"
+                                        id="superhost-all"
+                                        name="superhost"
+                                        value="All"
+                                        checked={superhostFilter === "All"}
+                                        onChange={() =>
+                                            setSuperhostFilter("All")
+                                        }
+                                    />
+                                    <label
+                                        htmlFor="superhost-all"
+                                        className="ml-2 text-sm font-medium"
+                                    >
+                                        All
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <input
+                                        type="radio"
                                         id="superhost-yes"
+                                        name="superhost"
+                                        value="Yes"
                                         checked={superhostFilter === "Yes"}
-                                        onCheckedChange={(checked) =>
-                                            setSuperhostFilter(
-                                                checked ? "Yes" : null
-                                            )
+                                        onChange={() =>
+                                            setSuperhostFilter("Yes")
                                         }
                                     />
                                     <label
                                         htmlFor="superhost-yes"
-                                        className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        className="ml-2 text-sm font-medium"
                                     >
                                         Yes
                                     </label>
                                 </div>
                                 <div className="flex items-center">
-                                    <Checkbox
+                                    <input
+                                        type="radio"
                                         id="superhost-no"
+                                        name="superhost"
+                                        value="No"
                                         checked={superhostFilter === "No"}
-                                        onCheckedChange={(checked) =>
-                                            setSuperhostFilter(
-                                                checked ? "No" : null
-                                            )
+                                        onChange={() =>
+                                            setSuperhostFilter("No")
                                         }
                                     />
                                     <label
                                         htmlFor="superhost-no"
-                                        className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        className="ml-2 text-sm font-medium"
                                     >
                                         No
                                     </label>
