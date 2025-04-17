@@ -127,13 +127,18 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
       }
     });
 
+    // Filter by reviews range
+    result = result.filter((item) => item.host.reviews >= reviewsRange[0] && item.host.reviews <= reviewsRange[1])
+
+    // Filter by rating range
+    result = result.filter((item) => item.host.rating >= ratingRange[0] && item.host.rating <= ratingRange[1])
+
     // Filter by superhost status
     if (superhostFilter === "Yes") {
       result = result.filter((item) => item.host.superhost)
     } else if (superhostFilter === "No") {
       result = result.filter((item) => !item.host.superhost)
     }
-    console.log("4", result);
     setFilteredData(result)
     
     // Reset to first page when filters change
@@ -142,7 +147,7 @@ export function HostsDataDashboard({ initialData }: HostsDataDashboardProps) {
 
   const resetFilters = () => {
     setZipCode("")
-    setReviewsRange([0, 7000])
+    setReviewsRange([0, 500])
     setRatingRange([0, 5])
     setYearFilters(initialYearFilters)
     setSuperhostFilter(null)
